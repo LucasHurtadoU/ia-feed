@@ -1,482 +1,620 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚡ IA Feed</title>
-    <style>
-        :root {
-            --bg: #0d0d0d;
-            --surface: #161616;
-            --border: #252525;
-            --text: #e2e8f0;
-            --muted: #64748b;
-            --accent: #4ade80;
-            --danger: #f87171;
-            --cat-industria: #f59e0b;
-            --cat-investigacion: #818cf8;
-            --cat-herramientas: #34d399;
-            --cat-debate: #f472b6;
-            --cat-ingenieria: #fb923c;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ IA Feed</title>
+<style>
+/* ══════════════════════════════════════════════════════
+   TOKENS — Dark & Light
+══════════════════════════════════════════════════════ */
+:root {
+  --bg:        #0b0b0f;
+  --surface:   #131318;
+  --surface2:  #1c1c24;
+  --border:    #2a2a38;
+  --text:      #e8eaf0;
+  --text2:     #a0a8b8;
+  --muted:     #5a6478;
+  --accent:    #4ade80;
+  --accent-d:  #22c55e;
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+  --c-industria:    #f59e0b;
+  --c-investigacion:#818cf8;
+  --c-herramientas: #34d399;
+  --c-debate:       #f472b6;
+  --c-ingenieria:   #fb923c;
 
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-            font-size: 14px;
-            line-height: 1.5;
-        }
+  --shadow: 0 4px 24px rgba(0,0,0,.45);
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+[data-theme="light"] {
+  --bg:       #f0f2f5;
+  --surface:  #ffffff;
+  --surface2: #f8f9fb;
+  --border:   #dde1ea;
+  --text:     #0f1117;
+  --text2:    #4a5568;
+  --muted:    #9aa3b2;
+  --shadow:   0 4px 24px rgba(0,0,0,.10);
+}
 
-        /* ── HEADER ── */
-        header {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 0 20px;
-            display: flex;
-            align-items: center;
-            height: 50px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            gap: 12px;
-        }
-        .logo { font-weight: 800; font-size: 16px; color: var(--accent); letter-spacing: -0.5px; white-space: nowrap; }
-        .logo span { color: var(--text); }
+/* ══════════════════════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:15px;line-height:1.55;transition:background .25s,color .25s}
 
-        .filters { display: flex; gap: 2px; flex: 1; overflow-x: auto; scrollbar-width: none; }
-        .filters::-webkit-scrollbar { display: none; }
+/* ══════════════════════════════════════════════════════
+   HEADER
+══════════════════════════════════════════════════════ */
+header{
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:0 24px;display:flex;align-items:center;height:54px;
+  position:sticky;top:0;z-index:200;gap:14px;
+}
+.logo{font-weight:900;font-size:18px;color:var(--accent);letter-spacing:-1px;white-space:nowrap;text-decoration:none}
+.logo span{color:var(--text)}
+.logo sup{font-size:9px;color:var(--muted);font-weight:600;letter-spacing:1px}
 
-        .filter-btn {
-            background: none; border: none; color: var(--muted);
-            padding: 5px 11px; border-radius: 5px; cursor: pointer;
-            font-size: 13px; white-space: nowrap; transition: all 0.15s;
-        }
-        .filter-btn:hover { color: var(--text); background: var(--border); }
-        .filter-btn.active { color: var(--accent); background: rgba(74,222,128,0.1); }
+.filters{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.filter-btn{background:none;border:none;color:var(--muted);padding:5px 12px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:500;white-space:nowrap;transition:all .15s}
+.filter-btn:hover{color:var(--text);background:var(--surface2)}
+.filter-btn.active{color:var(--accent);background:rgba(74,222,128,.1)}
 
-        .header-right { display: flex; align-items: center; gap: 10px; margin-left: auto; flex-shrink: 0; }
+.hdr-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.search-bar{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 14px;border-radius:20px;font-size:13px;width:160px;outline:none;transition:all .2s}
+.search-bar::placeholder{color:var(--muted)}
+.search-bar:focus{border-color:var(--accent);width:210px}
 
-        .refresh-timer { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 32px; text-align: right; }
+.timer-badge{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;background:var(--surface2);padding:4px 8px;border-radius:12px;min-width:38px;text-align:center}
 
-        .search-bar {
-            background: var(--border); border: 1px solid transparent; color: var(--text);
-            padding: 5px 12px; border-radius: 20px; font-size: 13px; width: 160px;
-            outline: none; transition: all 0.2s;
-        }
-        .search-bar::placeholder { color: var(--muted); }
-        .search-bar:focus { border-color: var(--accent); background: var(--surface); width: 200px; }
+.icon-btn{background:none;border:1px solid var(--border);color:var(--muted);width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:15px}
+.icon-btn:hover{color:var(--text);border-color:var(--accent);color:var(--accent)}
+.icon-btn.spinning svg{animation:spin .7s linear infinite}
 
-        .refresh-btn {
-            display: flex; align-items: center; gap: 5px;
-            background: none; border: 1px solid var(--border); color: var(--muted);
-            padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; transition: all 0.15s;
-        }
-        .refresh-btn:hover { color: var(--accent); border-color: var(--accent); }
-        .refresh-btn svg { transition: transform 0.3s; }
-        .refresh-btn.spinning svg { animation: spin 0.8s linear infinite; }
+/* ══════════════════════════════════════════════════════
+   TICKER
+══════════════════════════════════════════════════════ */
+.ticker-wrap{background:var(--surface);border-bottom:1px solid var(--border);padding:0;overflow:hidden;height:34px;display:flex;align-items:center}
+.ticker-label{background:var(--accent);color:#000;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:0 14px;height:100%;display:flex;align-items:center;flex-shrink:0;white-space:nowrap}
+.ticker-inner{overflow:hidden;flex:1;height:100%;display:flex;align-items:center}
+.ticker-track{display:flex;align-items:center;gap:0;animation:ticker 80s linear infinite;white-space:nowrap;will-change:transform}
+.ticker-track:hover{animation-play-state:paused}
+.ticker-item{font-size:12px;color:var(--text2);padding:0 32px;cursor:pointer;transition:color .15s}
+.ticker-item:hover{color:var(--accent)}
+.ticker-sep{color:var(--muted);font-size:10px}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-        /* ── PROGRESS BAR ── */
-        .progress-bar { position: fixed; top: 0; left: 0; height: 2px; background: var(--accent); width: 0; transition: width 0.2s ease; z-index: 999; }
+/* ══════════════════════════════════════════════════════
+   PROGRESS BAR
+══════════════════════════════════════════════════════ */
+.progress-bar{position:fixed;top:0;left:0;height:2px;background:var(--accent);width:0;transition:width .2s;z-index:999}
 
-        /* ── MAIN ── */
-        main { max-width: 900px; margin: 0 auto; padding: 16px 20px 40px; }
+/* ══════════════════════════════════════════════════════
+   MAIN LAYOUT
+══════════════════════════════════════════════════════ */
+main{max-width:1200px;margin:0 auto;padding:24px 20px 60px}
 
-        /* ── STATUS BAR ── */
-        .status-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 12px; color: var(--muted); }
-        .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #facc15; flex-shrink: 0; transition: background 0.4s; }
-        .status-dot.live { background: var(--accent); animation: pulse 2.5s ease-in-out infinite; }
+.status-bar{display:flex;align-items:center;gap:8px;margin-bottom:20px;font-size:12px;color:var(--muted)}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#facc15;flex-shrink:0;transition:background .4s}
+.live-dot.on{background:var(--accent);animation:pulse 2.5s ease-in-out infinite}
 
-        /* ── SECTION DIVIDER ── */
-        .section-divider {
-            display: flex; align-items: center; gap: 10px;
-            margin: 20px 0 8px; font-size: 11px; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 1px; color: var(--muted);
-        }
-        .section-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+/* ══════════════════════════════════════════════════════
+   SECTION LABEL
+══════════════════════════════════════════════════════ */
+.section-label{display:flex;align-items:center;gap:12px;margin:32px 0 14px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted)}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.section-label span{padding:3px 10px;border-radius:20px;font-size:10px}
+.sl-hoy span{background:rgba(74,222,128,.12);color:var(--accent)}
+.sl-ayer span{background:rgba(160,168,184,.1);color:var(--text2)}
+.sl-older span{background:var(--surface2);color:var(--muted)}
 
-        /* ── FEED LIST ── */
-        .feed-list { display: flex; flex-direction: column; gap: 2px; }
+/* ══════════════════════════════════════════════════════
+   GRID
+══════════════════════════════════════════════════════ */
+.news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 
-        /* ── FEED ITEM ── */
-        .feed-item {
-            display: flex; align-items: flex-start; gap: 12px;
-            padding: 12px 10px; border-radius: 8px; border: 1px solid transparent;
-            transition: background 0.1s, border-color 0.1s;
-            animation: fadeIn 0.25s ease both;
-        }
-        .feed-item:hover { background: var(--surface); border-color: var(--border); }
-        .feed-item.read .item-title { color: var(--muted); }
-        .feed-item.read .item-thumb { opacity: 0.45; }
+/* ── HERO CARD ── */
+.card-hero{grid-column:1/-1;position:relative;border-radius:var(--radius);overflow:hidden;min-height:380px;cursor:pointer;box-shadow:var(--shadow);animation:fadeIn .3s ease both}
+.card-hero .card-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.55);transition:filter .3s,transform .4s}
+.card-hero:hover .card-img{filter:brightness(.45);transform:scale(1.02)}
+.card-hero .card-img-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:80px;opacity:.15}
+.card-hero .card-body{position:absolute;inset:0;padding:32px 36px;display:flex;flex-direction:column;justify-content:flex-end;background:linear-gradient(to top,rgba(0,0,0,.88) 0%,rgba(0,0,0,.3) 60%,transparent 100%)}
+.card-hero .card-cat{margin-bottom:12px}
+.card-hero .card-title{font-size:clamp(22px,3vw,34px);font-weight:800;line-height:1.25;color:#fff;margin-bottom:12px;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+.card-hero .card-desc{font-size:15px;color:rgba(255,255,255,.75);line-height:1.55;margin-bottom:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:760px}
+.card-hero .card-meta{display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(255,255,255,.6)}
+.card-hero .read-btn{margin-left:auto;background:var(--accent);color:#000;font-size:12px;font-weight:700;padding:7px 18px;border-radius:20px;border:none;cursor:pointer;transition:transform .15s,opacity .15s}
+.card-hero .read-btn:hover{transform:scale(1.05)}
 
-        .item-rank { font-size: 11px; color: var(--muted); min-width: 22px; text-align: right; padding-top: 4px; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+/* ── FEATURED CARD (2-col span) ── */
+.card-featured{grid-column:span 2;border-radius:var(--radius);overflow:hidden;background:var(--surface);border:1px solid var(--border);cursor:pointer;box-shadow:var(--shadow);animation:fadeIn .3s ease both;transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column}
+.card-featured:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.card-featured .card-img-wrap{height:210px;overflow:hidden;position:relative;background:var(--surface2);flex-shrink:0}
+.card-featured .card-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .4s,opacity .3s;opacity:0}
+.card-featured .card-img-wrap img.loaded{opacity:1}
+.card-featured .card-img-wrap img:hover{transform:scale(1.04)}
+.card-featured .card-img-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:52px;opacity:.2}
+.card-featured .card-body{padding:18px 20px 16px;display:flex;flex-direction:column;flex:1}
+.card-featured .card-title{font-size:18px;font-weight:700;line-height:1.35;color:var(--text);margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-featured .card-desc{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;flex:1}
+.card-featured .card-meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-top:auto}
 
-        /* ── THUMBNAIL ── */
-        .item-thumb {
-            width: 96px; height: 66px; border-radius: 6px; overflow: hidden;
-            flex-shrink: 0; background: var(--border); position: relative;
-        }
-        .item-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.3s; }
-        .item-thumb img.loaded { opacity: 1; }
-        .item-thumb-placeholder {
-            width: 100%; height: 100%; display: flex; align-items: center;
-            justify-content: center; font-size: 24px; opacity: 0.35;
-        }
+/* ── REGULAR CARD (1-col) ── */
+.card-regular{border-radius:var(--radius);overflow:hidden;background:var(--surface);border:1px solid var(--border);cursor:pointer;box-shadow:var(--shadow);animation:fadeIn .3s ease both;transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column}
+.card-regular:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.card-regular .card-img-wrap{height:160px;overflow:hidden;position:relative;background:var(--surface2);flex-shrink:0}
+.card-regular .card-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .4s,opacity .3s;opacity:0}
+.card-regular .card-img-wrap img.loaded{opacity:1}
+.card-regular .card-img-wrap img:hover{transform:scale(1.05)}
+.card-regular .card-img-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:40px;opacity:.2}
+.card-regular .card-body{padding:14px 16px 14px;display:flex;flex-direction:column;flex:1}
+.card-regular .card-title{font-size:15px;font-weight:700;line-height:1.35;color:var(--text);margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card-regular .card-desc{font-size:12.5px;color:var(--text2);line-height:1.5;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;flex:1}
+.card-regular .card-meta{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);margin-top:auto;flex-wrap:wrap}
 
-        /* ── BODY ── */
-        .item-body { flex: 1; min-width: 0; }
+/* ── SHARED META & TAGS ── */
+.card-source{font-weight:700;color:var(--text2)}
+.card-dot{width:3px;height:3px;border-radius:50%;background:var(--muted);flex-shrink:0}
+.card-time,.card-read{color:var(--muted)}
+.card-cat{display:inline-flex}
+.cat-tag{font-size:10px;font-weight:800;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px}
+.cat-industria    {background:rgba(245,158,11,.13);color:var(--c-industria)}
+.cat-investigacion{background:rgba(129,140,248,.13);color:var(--c-investigacion)}
+.cat-herramientas {background:rgba(52,211,153,.13); color:var(--c-herramientas)}
+.cat-debate       {background:rgba(244,114,182,.13);color:var(--c-debate)}
+.cat-ingenieria   {background:rgba(251,146,60,.13); color:var(--c-ingenieria)}
 
-        .item-title {
-            color: var(--text); text-decoration: none; font-size: 14px;
-            font-weight: 600; line-height: 1.4; display: block;
-            margin-bottom: 5px; word-break: break-word;
-        }
-        .item-title:hover { color: var(--accent); }
+/* Category accent left-border on cards */
+.card-regular.cat-border-industria,
+.card-featured.cat-border-industria{border-left:3px solid var(--c-industria)}
+.card-regular.cat-border-investigacion,
+.card-featured.cat-border-investigacion{border-left:3px solid var(--c-investigacion)}
+.card-regular.cat-border-herramientas,
+.card-featured.cat-border-herramientas{border-left:3px solid var(--c-herramientas)}
+.card-regular.cat-border-debate,
+.card-featured.cat-border-debate{border-left:3px solid var(--c-debate)}
+.card-regular.cat-border-ingenieria,
+.card-featured.cat-border-ingenieria{border-left:3px solid var(--c-ingenieria)}
 
-        .item-desc {
-            font-size: 12.5px; color: var(--muted); line-height: 1.5;
-            margin-bottom: 6px; display: -webkit-box;
-            -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-        }
+/* Read state */
+.card-hero.read .card-title,.card-featured.read .card-title,.card-regular.read .card-title{color:var(--muted)}
 
-        .item-meta { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
-        .item-source { font-size: 12px; color: var(--muted); font-weight: 600; }
-        .item-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
-        .item-time { font-size: 12px; color: var(--muted); }
+/* ── SKELETON ── */
+.news-grid.loading .card-hero,
+.news-grid.loading .card-featured,
+.news-grid.loading .card-regular{display:none}
+.skel-wrap{display:contents}
+.skel{border-radius:4px;background:var(--surface2);animation:shimmer 1.6s ease-in-out infinite}
+.skel-hero{grid-column:1/-1;height:380px;border-radius:var(--radius)}
+.skel-feat{grid-column:span 2;height:340px;border-radius:var(--radius)}
+.skel-reg {height:280px;border-radius:var(--radius)}
 
-        .item-tag { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.4px; }
-        .tag-industria    { background: rgba(245,158,11,0.12); color: var(--cat-industria); }
-        .tag-investigacion{ background: rgba(129,140,248,0.12); color: var(--cat-investigacion); }
-        .tag-herramientas { background: rgba(52,211,153,0.12);  color: var(--cat-herramientas); }
-        .tag-debate       { background: rgba(244,114,182,0.12); color: var(--cat-debate); }
-        .tag-ingenieria   { background: rgba(251,146,60,0.12);  color: var(--cat-ingenieria); }
+/* ── EMPTY ── */
+.empty-state{grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--muted)}
+.empty-state h3{font-size:18px;margin-bottom:8px;color:var(--text)}
+.error-banner{grid-column:1/-1;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:var(--radius-sm);padding:12px 16px;font-size:13px;color:#f87171;margin-bottom:4px}
 
-        /* ── SKELETON ── */
-        .skeleton-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 10px; }
-        .skel { border-radius: 4px; background: var(--surface); animation: shimmer 1.6s ease-in-out infinite; }
-        .skel-rank  { width: 18px; height: 12px; margin-top: 3px; flex-shrink: 0; }
-        .skel-thumb { width: 96px; height: 66px; border-radius: 6px; flex-shrink: 0; }
-        .skel-body  { flex: 1; }
-        .skel-title { height: 15px; margin-bottom: 8px; }
-        .skel-desc  { height: 11px; margin-bottom: 5px; }
-        .skel-desc2 { height: 11px; margin-bottom: 8px; width: 70%; }
-        .skel-meta  { height: 11px; width: 40%; }
+/* ── LOAD MORE ── */
+.load-more-wrap{grid-column:1/-1;display:flex;justify-content:center;margin-top:8px}
+.load-more-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:10px 28px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s}
+.load-more-btn:hover{border-color:var(--accent);color:var(--accent)}
 
-        /* ── EMPTY / ERROR ── */
-        .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
-        .empty-state h3 { font-size: 16px; margin-bottom: 6px; color: var(--text); }
-        .error-banner {
-            background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.2);
-            border-radius: 6px; padding: 10px 14px; font-size: 12px; color: var(--danger); margin-bottom: 12px;
-        }
+/* ── FOOTER ── */
+footer{text-align:center;padding:32px 16px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);margin-top:16px}
+footer a{color:var(--muted);text-decoration:none}
+footer a:hover{color:var(--accent)}
 
-        /* ── FOOTER ── */
-        footer { text-align: center; padding: 28px 16px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); margin-top: 24px; }
-        footer a { color: var(--muted); text-decoration: none; }
-        footer a:hover { color: var(--accent); }
+/* ══════════════════════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════════════════════ */
+@keyframes spin   {to{transform:rotate(360deg)}}
+@keyframes pulse  {0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes shimmer{0%,100%{opacity:.4}50%{opacity:.7}}
+@keyframes fadeIn {from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 
-        /* ── ANIMATIONS ── */
-        @keyframes spin    { to { transform: rotate(360deg); } }
-        @keyframes pulse   { 0%,100%{opacity:1} 50%{opacity:0.3} }
-        @keyframes shimmer { 0%,100%{opacity:0.4} 50%{opacity:0.7} }
-        @keyframes fadeIn  { from{opacity:0;transform:translateY(3px)} to{opacity:1;transform:translateY(0)} }
-
-        @media (max-width: 600px) {
-            .filters { max-width: 200px; }
-            .search-bar { width: 110px; }
-            .search-bar:focus { width: 140px; }
-            .refresh-btn span { display: none; }
-            .item-thumb { width: 72px; height: 50px; }
-        }
-    </style>
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════ */
+@media(max-width:900px){
+  .news-grid{grid-template-columns:repeat(2,1fr)}
+  .card-hero{min-height:280px}
+  .card-featured{grid-column:span 2}
+}
+@media(max-width:600px){
+  .news-grid{grid-template-columns:1fr}
+  .card-hero{min-height:220px}
+  .card-featured,.card-hero{grid-column:1/-1}
+  .filters{max-width:200px}
+  .search-bar{width:120px}
+  header{padding:0 14px;gap:8px}
+}
+</style>
 </head>
 <body>
 
 <div class="progress-bar" id="progressBar"></div>
 
+<!-- ═══ HEADER ═══════════════════════════════════════════════ -->
 <header>
-    <div class="logo">⚡ <span>IA</span>Feed</div>
-    <div class="filters" id="filters">
-        <button class="filter-btn active" data-filter="all">Todo</button>
-        <button class="filter-btn" data-filter="industria">Industria</button>
-        <button class="filter-btn" data-filter="investigacion">Investigación</button>
-        <button class="filter-btn" data-filter="herramientas">Herramientas</button>
-        <button class="filter-btn" data-filter="debate">Debate</button>
-        <button class="filter-btn" data-filter="ingenieria">Ingeniería+IA</button>
-    </div>
-    <div class="header-right">
-        <input class="search-bar" type="text" placeholder="🔍  Buscar…" id="searchInput" autocomplete="off">
-        <span class="refresh-timer" id="timerDisplay">5:00</span>
-        <button class="refresh-btn" id="refreshBtn" onclick="manualRefresh()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="23 4 23 10 17 10"/>
-                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-            </svg>
-            <span>Actualizar</span>
-        </button>
-    </div>
+  <a class="logo" href="#">⚡<span>IA</span>Feed <sup>BETA</sup></a>
+
+  <div class="filters" id="filters">
+    <button class="filter-btn active" data-filter="all">Todo</button>
+    <button class="filter-btn" data-filter="industria">Industria</button>
+    <button class="filter-btn" data-filter="investigacion">Investigación</button>
+    <button class="filter-btn" data-filter="herramientas">Herramientas</button>
+    <button class="filter-btn" data-filter="debate">Debate</button>
+    <button class="filter-btn" data-filter="ingenieria">Ingeniería+IA</button>
+  </div>
+
+  <div class="hdr-right">
+    <input class="search-bar" type="text" placeholder="🔍 Buscar…" id="searchInput" autocomplete="off">
+    <span class="timer-badge" id="timerDisplay">5:00</span>
+    <button class="icon-btn" id="refreshBtn" onclick="manualRefresh()" title="Actualizar">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+      </svg>
+    </button>
+    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="Cambiar tema">🌓</button>
+  </div>
 </header>
 
-<main>
-    <div class="status-bar">
-        <div class="status-dot" id="statusDot"></div>
-        <span id="statusText">Cargando fuentes de noticias…</span>
+<!-- ═══ TICKER ════════════════════════════════════════════════ -->
+<div class="ticker-wrap">
+  <div class="ticker-label">🔴 En vivo</div>
+  <div class="ticker-inner">
+    <div class="ticker-track" id="tickerTrack">
+      <span class="ticker-item" style="color:var(--muted);font-style:italic">Cargando últimas noticias…</span>
     </div>
-    <div id="errorContainer"></div>
-    <div class="feed-list" id="feedContainer"></div>
+  </div>
+</div>
+
+<!-- ═══ MAIN ══════════════════════════════════════════════════ -->
+<main>
+  <div class="status-bar">
+    <div class="live-dot" id="liveDot"></div>
+    <span id="statusText">Cargando fuentes…</span>
+  </div>
+
+  <div id="feedRoot"></div>
 </main>
 
 <footer>
-    ⚡ IA Feed · Auto-actualización cada 5 min ·
-    <a href="#" onclick="clearReadItems(); return false;">Marcar todo como no leído</a>
+  ⚡ IA Feed · Auto-actualización cada 5 min ·
+  <a href="#" onclick="clearRead();return false">Marcar todo como no leído</a>
 </footer>
 
+<!-- ═══ SCRIPT ════════════════════════════════════════════════ -->
 <script>
+/* ── CONFIG ─────────────────────────────────────── */
 const REFRESH_SECS   = 5 * 60;
 const ITEMS_PER_FEED = 10;
 const PROXY = 'https://api.rss2json.com/v1/api.json?count=' + ITEMS_PER_FEED + '&rss_url=';
+const PAGE_SIZE = 12; // cards to show before "Load more"
 
-const CAT_EMOJI  = { industria:'🏭', investigacion:'🔬', herramientas:'🛠️', debate:'💬', ingenieria:'🏗️' };
-const CAT_LABELS = { industria:'Industria', investigacion:'Investigación', herramientas:'Herramientas', debate:'Debate', ingenieria:'Ingeniería+IA' };
+const CAT_EMOJI = {industria:'🏭',investigacion:'🔬',herramientas:'🛠️',debate:'💬',ingenieria:'🏗️'};
+const CAT_LABEL = {industria:'Industria',investigacion:'Investigación',herramientas:'Herramientas',debate:'Debate',ingenieria:'Ingeniería+IA'};
 
 const FEEDS = [
-    { url:'https://techcrunch.com/category/artificial-intelligence/feed/',            name:'TechCrunch',      cat:'industria' },
-    { url:'https://venturebeat.com/ai/feed/',                                         name:'VentureBeat',     cat:'industria' },
-    { url:'https://www.theverge.com/rss/ai-artificial-intelligence/index.xml',        name:'The Verge',       cat:'industria' },
-    { url:'https://www.artificialintelligence-news.com/feed/',                        name:'AI News',         cat:'industria' },
-    { url:'https://www.anthropic.com/rss.xml',                                        name:'Anthropic',       cat:'industria' },
-    { url:'https://huggingface.co/blog/feed.xml',                                     name:'HuggingFace',     cat:'investigacion' },
-    { url:'https://bair.berkeley.edu/blog/feed.xml',                                  name:'BAIR Blog',       cat:'investigacion' },
-    { url:'https://openai.com/blog/rss/',                                             name:'OpenAI Blog',     cat:'investigacion' },
-    { url:'https://blog.google/technology/ai/rss/',                                   name:'Google AI',       cat:'investigacion' },
-    { url:'https://simonwillison.net/atom/entries/',                                  name:'Simon Willison',  cat:'herramientas' },
-    { url:'https://www.deeplearning.ai/the-batch/feed/',                              name:'The Batch',       cat:'herramientas' },
-    { url:'https://buttondown.com/ainews/rss',                                        name:'AI News Daily',   cat:'herramientas' },
-    { url:'https://www.technologyreview.com/feed/',                                   name:'MIT Tech Review', cat:'debate' },
-    { url:'https://www.wired.com/feed/tag/artificial-intelligence/rss',               name:'Wired AI',        cat:'debate' },
-    { url:'https://spectrum.ieee.org/feeds/blog/tech-talk.rss',                       name:'IEEE Spectrum',   cat:'debate' },
-    { url:'https://aecmag.com/feed/',                                                 name:'AEC Magazine',    cat:'ingenieria' },
-    { url:'https://constructionblog.autodesk.com/feed/',                              name:'Autodesk Const.', cat:'ingenieria' },
-    { url:'https://www.enr.com/rss/technology',                                       name:'ENR Technology',  cat:'ingenieria' },
+  {url:'https://techcrunch.com/category/artificial-intelligence/feed/',            name:'TechCrunch',      cat:'industria'},
+  {url:'https://venturebeat.com/ai/feed/',                                         name:'VentureBeat',     cat:'industria'},
+  {url:'https://www.theverge.com/rss/ai-artificial-intelligence/index.xml',        name:'The Verge',       cat:'industria'},
+  {url:'https://www.artificialintelligence-news.com/feed/',                        name:'AI News',         cat:'industria'},
+  {url:'https://www.anthropic.com/rss.xml',                                        name:'Anthropic',       cat:'industria'},
+  {url:'https://huggingface.co/blog/feed.xml',                                     name:'HuggingFace',     cat:'investigacion'},
+  {url:'https://bair.berkeley.edu/blog/feed.xml',                                  name:'BAIR Blog',       cat:'investigacion'},
+  {url:'https://openai.com/blog/rss/',                                             name:'OpenAI Blog',     cat:'investigacion'},
+  {url:'https://blog.google/technology/ai/rss/',                                   name:'Google AI',       cat:'investigacion'},
+  {url:'https://simonwillison.net/atom/entries/',                                  name:'Simon Willison',  cat:'herramientas'},
+  {url:'https://www.deeplearning.ai/the-batch/feed/',                              name:'The Batch',       cat:'herramientas'},
+  {url:'https://buttondown.com/ainews/rss',                                        name:'AI News Daily',   cat:'herramientas'},
+  {url:'https://www.technologyreview.com/feed/',                                   name:'MIT Tech Review', cat:'debate'},
+  {url:'https://www.wired.com/feed/tag/artificial-intelligence/rss',               name:'Wired AI',        cat:'debate'},
+  {url:'https://spectrum.ieee.org/feeds/blog/tech-talk.rss',                       name:'IEEE Spectrum',   cat:'debate'},
+  {url:'https://aecmag.com/feed/',                                                 name:'AEC Magazine',    cat:'ingenieria'},
+  {url:'https://constructionblog.autodesk.com/feed/',                              name:'Autodesk Const.', cat:'ingenieria'},
+  {url:'https://www.enr.com/rss/technology',                                       name:'ENR Technology',  cat:'ingenieria'},
 ];
 
-let allItems = [], activeFilter = 'all', searchQuery = '', timerSecs = REFRESH_SECS, timerInterval = null, isLoading = false;
+/* ── STATE ──────────────────────────────────────── */
+let allItems = [], activeFilter = 'all', searchQuery = '', timerSecs = REFRESH_SECS;
+let timerInterval = null, isLoading = false, visibleCount = PAGE_SIZE;
 let readSet = new Set();
-try { readSet = new Set(JSON.parse(localStorage.getItem('iaFeed_read') || '[]')); } catch(e){}
+try { readSet = new Set(JSON.parse(localStorage.getItem('iaFeed_read')||'[]')); } catch(e){}
+let theme = localStorage.getItem('iaFeed_theme') || 'dark';
+document.documentElement.setAttribute('data-theme', theme);
 
-// ── FETCH ────────────────────────────────────────────────────────
+/* ── FETCH ──────────────────────────────────────── */
 async function fetchFeed(feed) {
-    try {
-        const res  = await fetch(PROXY + encodeURIComponent(feed.url));
-        const data = await res.json();
-        if (data.status === 'ok' && Array.isArray(data.items)) {
-            return data.items.map(item => ({
-                id:      item.link || item.guid,
-                title:   cleanText(item.title || 'Sin título'),
-                desc:    extractDesc(item.description || item.summary || item.content || ''),
-                image:   extractImage(item),
-                link:    item.link,
-                source:  feed.name,
-                cat:     feed.cat,
-                pubDate: new Date(item.pubDate || item.published || Date.now()),
-            }));
-        }
-    } catch(e) {}
-    return [];
+  try {
+    const r = await fetch(PROXY + encodeURIComponent(feed.url));
+    const d = await r.json();
+    if (d.status === 'ok' && Array.isArray(d.items)) {
+      return d.items.map(item => ({
+        id:      item.link || item.guid,
+        title:   clean(item.title || 'Sin título'),
+        desc:    extractDesc(item.description || item.summary || ''),
+        image:   extractImg(item),
+        link:    item.link,
+        source:  feed.name,
+        cat:     feed.cat,
+        pubDate: new Date(item.pubDate || item.published || Date.now()),
+        readMin: readMin(item.description || ''),
+      }));
+    }
+  } catch(e){}
+  return [];
 }
 
-function extractImage(item) {
-    if (item.thumbnail && /^https?:\/\//.test(item.thumbnail)) return item.thumbnail;
-    if (item.enclosure?.link && /\.(jpg|jpeg|png|webp|gif)/i.test(item.enclosure.link)) return item.enclosure.link;
-    const m = (item.description || '').match(/<img[^>]+src=["']([^"']+)["']/i);
-    if (m && /^https?:\/\//.test(m[1])) return m[1];
-    return null;
+function extractImg(item) {
+  if (item.thumbnail && /^https?:\/\//.test(item.thumbnail)) return item.thumbnail;
+  if (item.enclosure?.link && /\.(jpg|jpeg|png|webp|gif)/i.test(item.enclosure.link)) return item.enclosure.link;
+  const m = (item.description||'').match(/<img[^>]+src=["']([^"']+)["']/i);
+  if (m && /^https?:\/\//.test(m[1])) return m[1];
+  return null;
 }
-
 function extractDesc(html) {
-    return cleanText(
-        html.replace(/<style[\s\S]*?<\/style>/gi,'')
-            .replace(/<script[\s\S]*?<\/script>/gi,'')
-            .replace(/<[^>]+>/g,' ')
-            .replace(/\s+/g,' ')
-    ).slice(0, 240);
+  return clean(html.replace(/<style[\s\S]*?<\/style>/gi,'').replace(/<script[\s\S]*?<\/script>/gi,'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ')).slice(0,260);
+}
+function readMin(html) {
+  const words = extractDesc(html).split(/\s+/).length;
+  return Math.max(1, Math.round(words / 40));
+}
+function clean(s) {
+  return s.replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&nbsp;/g,' ').replace(/&#\d+;/g,'').replace(/&[a-z]+;/g,' ').trim();
 }
 
-function cleanText(s) {
-    return s.replace(/<[^>]*>/g,'')
-            .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>')
-            .replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&nbsp;/g,' ')
-            .replace(/&#\d+;/g,'').replace(/&[a-z]+;/g,' ').trim();
-}
-
-// ── LOAD ─────────────────────────────────────────────────────────
+/* ── LOAD ───────────────────────────────────────── */
 async function loadAllFeeds() {
-    if (isLoading) return;
-    isLoading = true;
-    showSkeleton();
-    setStatus('Actualizando fuentes…', false);
+  if (isLoading) return;
+  isLoading = true;
+  showSkeleton();
+  setStatus('Actualizando fuentes…', false);
 
-    const bar = document.getElementById('progressBar');
-    let prog = 0;
-    const tick = setInterval(() => { prog = Math.min(prog+1.5,88); bar.style.width=prog+'%'; }, 80);
+  const bar = document.getElementById('progressBar');
+  let p = 0;
+  const t = setInterval(() => { p = Math.min(p+1.5,88); bar.style.width=p+'%'; }, 80);
 
-    const results = await Promise.allSettled(FEEDS.map(f => fetchFeed(f)));
-    let items = [], failed = [];
-    results.forEach((r,i) => r.status==='fulfilled' ? items.push(...r.value) : failed.push(FEEDS[i].name));
+  const results = await Promise.allSettled(FEEDS.map(f => fetchFeed(f)));
+  let items = [], failed = [];
+  results.forEach((r,i) => r.status==='fulfilled' ? items.push(...r.value) : failed.push(FEEDS[i].name));
 
-    const seen = new Set();
-    items = items.filter(it => { if (!it.id||seen.has(it.id)) return false; seen.add(it.id); return true; });
-    items.sort((a,b) => b.pubDate - a.pubDate);
-    allItems = items;
+  const seen = new Set();
+  items = items.filter(it => { if(!it.id||seen.has(it.id)) return false; seen.add(it.id); return true; });
+  items.sort((a,b) => b.pubDate - a.pubDate);
+  allItems = items;
 
-    clearInterval(tick);
-    bar.style.width='100%';
-    setTimeout(() => { bar.style.width='0'; bar.style.transition='none'; setTimeout(()=>bar.style.transition='',50); }, 400);
+  clearInterval(t);
+  bar.style.width='100%';
+  setTimeout(() => { bar.style.width='0'; bar.style.transition='none'; setTimeout(()=>bar.style.transition='',50); }, 400);
 
-    render();
-    setStatus(`${items.length} artículos · actualizado a las ${fmtTime(new Date())}`, true);
-    document.getElementById('errorContainer').innerHTML = failed.length
-        ? `<div class="error-banner">⚠️ No se cargaron: ${esc(failed.join(', '))} — se reintentará pronto.</div>` : '';
-
-    isLoading = false;
-    resetTimer();
+  visibleCount = PAGE_SIZE;
+  render();
+  renderTicker();
+  setStatus(`${items.length} artículos · actualizado ${fmtTime(new Date())}`, true);
+  isLoading = false;
+  resetTimer();
 }
 
-// ── RENDER ───────────────────────────────────────────────────────
+/* ── TICKER ─────────────────────────────────────── */
+function renderTicker() {
+  const track = document.getElementById('tickerTrack');
+  const latest = allItems.slice(0, 20);
+  if (!latest.length) return;
+  // Duplicate for seamless loop
+  const html = [...latest, ...latest].map(it =>
+    `<span class="ticker-item" onclick="window.open('${esc(it.link)}','_blank')">${esc(it.title)}</span><span class="ticker-sep">◆</span>`
+  ).join('');
+  track.innerHTML = html;
+  // Adjust animation speed based on content width
+  const len = latest.reduce((a,b) => a + b.title.length, 0);
+  const dur = Math.max(60, len * 0.18);
+  track.style.animationDuration = dur + 's';
+}
+
+/* ── RENDER ─────────────────────────────────────── */
 function render() {
-    const container = document.getElementById('feedContainer');
-    let filtered = allItems;
-    if (activeFilter !== 'all') filtered = filtered.filter(it => it.cat === activeFilter);
-    if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
-        filtered = filtered.filter(it => it.title.toLowerCase().includes(q) || it.source.toLowerCase().includes(q) || it.desc.toLowerCase().includes(q));
+  const root = document.getElementById('feedRoot');
+
+  let filtered = allItems;
+  if (activeFilter !== 'all') filtered = filtered.filter(it => it.cat === activeFilter);
+  if (searchQuery.trim()) {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter(it => it.title.toLowerCase().includes(q) || it.source.toLowerCase().includes(q) || it.desc.toLowerCase().includes(q));
+  }
+
+  if (!filtered.length) {
+    root.innerHTML = '<div class="news-grid"><div class="empty-state"><h3>Sin resultados</h3><p>Prueba con otro filtro o término de búsqueda.</p></div></div>';
+    return;
+  }
+
+  const today     = dayStart(new Date());
+  const yesterday = dayStart(new Date(+today - 86400000));
+
+  // Group by day section
+  const sections = [];
+  let currentSection = null;
+
+  for (const it of filtered) {
+    const day = dayStart(it.pubDate);
+    const label = day >= today ? 'Hoy' : day >= yesterday ? 'Ayer'
+      : it.pubDate.toLocaleDateString('es-ES', {weekday:'long', day:'numeric', month:'long'});
+    if (label !== currentSection) {
+      sections.push({ label, items: [] });
+      currentSection = label;
     }
+    sections[sections.length-1].items.push(it);
+  }
 
-    if (!filtered.length) {
-        container.innerHTML = '<div class="empty-state"><h3>Sin resultados</h3><p>Prueba con otro filtro o término de búsqueda.</p></div>';
-        return;
-    }
+  let totalRendered = 0;
+  let html = '';
 
-    const today = startOfDay(new Date()), yesterday = startOfDay(new Date(+today - 86400000));
-    let html = '', lastSection = null, rank = 1;
+  for (const sec of sections) {
+    if (totalRendered >= visibleCount) break;
+    const slCls = sec.label === 'Hoy' ? 'sl-hoy' : sec.label === 'Ayer' ? 'sl-ayer' : 'sl-older';
+    html += `<div class="section-label ${slCls}"><span>${sec.label}</span></div>`;
+    html += `<div class="news-grid">`;
 
-    for (const it of filtered) {
-        const day = startOfDay(it.pubDate);
-        const section = day >= today ? 'Hoy' : day >= yesterday ? 'Ayer'
-            : it.pubDate.toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long' });
+    let isFirst = (totalRendered === 0);
 
-        if (section !== lastSection) {
-            if (lastSection !== null) rank = 1;
-            html += `<div class="section-divider">${section}</div>`;
-            lastSection = section;
-        }
+    for (const it of sec.items) {
+      if (totalRendered >= visibleCount) break;
+      const isRead = readSet.has(it.id);
+      const emoji  = CAT_EMOJI[it.cat] || '📰';
+      const catTag = `<span class="cat-tag cat-${it.cat}">${CAT_LABEL[it.cat]||it.cat}</span>`;
+      const meta   = `<span class="card-source">${esc(it.source)}</span><div class="card-dot"></div><span class="card-time">${timeAgo(it.pubDate)}</span><div class="card-dot"></div><span class="card-read">⏱ ${it.readMin} min</span>`;
 
-        const isRead = readSet.has(it.id);
-        const emoji  = CAT_EMOJI[it.cat] || '📰';
-
-        const thumbHtml = it.image
-            ? `<div class="item-thumb"><img src="${esc(it.image)}" alt="" loading="lazy" onload="this.classList.add('loaded')" onerror="this.parentElement.innerHTML='<div class=&quot;item-thumb-placeholder&quot;>${emoji}</div>'"></div>`
-            : `<div class="item-thumb"><div class="item-thumb-placeholder">${emoji}</div></div>`;
-
-        const descHtml = it.desc ? `<div class="item-desc">${esc(it.desc)}</div>` : '';
-
+      if (isFirst && sec.label === 'Hoy') {
+        // ── HERO ──
+        const imgEl = it.image
+          ? `<img class="card-img" src="${esc(it.image)}" alt="" loading="lazy" onload="this.style.opacity=1" onerror="this.style.display='none'">`
+          : `<div class="card-img-fallback">${emoji}</div>`;
         html += `
-        <div class="feed-item${isRead?' read':''}" data-id="${esc(it.id)}">
-            <div class="item-rank">${rank++}</div>
-            ${thumbHtml}
-            <div class="item-body">
-                <a class="item-title" href="${esc(it.link)}" target="_blank" rel="noopener noreferrer" onclick="markRead('${esc(it.id)}')">
-                    ${esc(it.title)}
-                </a>
-                ${descHtml}
-                <div class="item-meta">
-                    <span class="item-source">${esc(it.source)}</span>
-                    <div class="item-dot"></div>
-                    <span class="item-time">${getTimeAgo(it.pubDate)}</span>
-                    <div class="item-dot"></div>
-                    <span class="item-tag tag-${it.cat}">${CAT_LABELS[it.cat]||it.cat}</span>
-                </div>
-            </div>
+        <div class="card-hero${isRead?' read':''}" data-id="${esc(it.id)}" onclick="openArticle('${esc(it.id)}','${esc(it.link)}')">
+          ${imgEl}
+          <div class="card-body">
+            <div class="card-cat">${catTag}</div>
+            <div class="card-title">${esc(it.title)}</div>
+            ${it.desc ? `<div class="card-desc">${esc(it.desc)}</div>` : ''}
+            <div class="card-meta">${meta}<button class="read-btn">Leer →</button></div>
+          </div>
         </div>`;
+        isFirst = false;
+      } else if (totalRendered === 1 || totalRendered === 2) {
+        // ── FEATURED (first two after hero) ──
+        const imgEl = it.image
+          ? `<img src="${esc(it.image)}" alt="" loading="lazy" onload="this.classList.add('loaded')" onerror="this.parentElement.innerHTML='<div class=\\"card-img-fallback\\">${emoji}</div>'">`
+          : `<div class="card-img-fallback">${emoji}</div>`;
+        html += `
+        <div class="card-featured cat-border-${it.cat}${isRead?' read':''}" data-id="${esc(it.id)}" onclick="openArticle('${esc(it.id)}','${esc(it.link)}')">
+          <div class="card-img-wrap">${imgEl}</div>
+          <div class="card-body">
+            <div class="card-cat" style="margin-bottom:8px">${catTag}</div>
+            <div class="card-title">${esc(it.title)}</div>
+            ${it.desc ? `<div class="card-desc">${esc(it.desc)}</div>` : ''}
+            <div class="card-meta">${meta}</div>
+          </div>
+        </div>`;
+      } else {
+        // ── REGULAR ──
+        const imgEl = it.image
+          ? `<img src="${esc(it.image)}" alt="" loading="lazy" onload="this.classList.add('loaded')" onerror="this.parentElement.innerHTML='<div class=\\"card-img-fallback\\">${emoji}</div>'">`
+          : `<div class="card-img-fallback">${emoji}</div>`;
+        html += `
+        <div class="card-regular cat-border-${it.cat}${isRead?' read':''}" data-id="${esc(it.id)}" onclick="openArticle('${esc(it.id)}','${esc(it.link)}')">
+          <div class="card-img-wrap">${imgEl}</div>
+          <div class="card-body">
+            <div class="card-cat" style="margin-bottom:6px">${catTag}</div>
+            <div class="card-title">${esc(it.title)}</div>
+            ${it.desc ? `<div class="card-desc">${esc(it.desc)}</div>` : ''}
+            <div class="card-meta">${meta}</div>
+          </div>
+        </div>`;
+      }
+      totalRendered++;
     }
-    container.innerHTML = html;
+
+    html += `</div>`;
+  }
+
+  // Load more button
+  if (totalRendered < filtered.length) {
+    html += `<div class="load-more-wrap"><button class="load-more-btn" onclick="loadMore()">Cargar más noticias (${filtered.length - totalRendered} restantes)</button></div>`;
+  }
+
+  root.innerHTML = html;
 }
 
-// ── INTERACTIONS ─────────────────────────────────────────────────
-function markRead(id) {
-    readSet.add(id);
-    try { localStorage.setItem('iaFeed_read', JSON.stringify([...readSet])); } catch(e){}
-    document.querySelector(`.feed-item[data-id="${esc(id)}"]`)?.classList.add('read');
+function loadMore() {
+  visibleCount += PAGE_SIZE;
+  render();
 }
-function clearReadItems() {
-    readSet.clear();
-    try { localStorage.removeItem('iaFeed_read'); } catch(e){}
-    document.querySelectorAll('.feed-item.read').forEach(el => el.classList.remove('read'));
+
+/* ── INTERACTIONS ───────────────────────────────── */
+function openArticle(id, url) {
+  readSet.add(id);
+  try { localStorage.setItem('iaFeed_read', JSON.stringify([...readSet])); } catch(e){}
+  document.querySelector(`[data-id="${esc(id)}"]`)?.classList.add('read');
+  window.open(url, '_blank', 'noopener,noreferrer');
+}
+function clearRead() {
+  readSet.clear();
+  try { localStorage.removeItem('iaFeed_read'); } catch(e){}
+  document.querySelectorAll('.card-hero.read,.card-featured.read,.card-regular.read').forEach(el => el.classList.remove('read'));
 }
 function manualRefresh() {
-    const btn = document.getElementById('refreshBtn');
-    btn.classList.add('spinning');
-    loadAllFeeds().finally(() => btn.classList.remove('spinning'));
+  document.getElementById('refreshBtn').classList.add('spinning');
+  loadAllFeeds().finally(() => document.getElementById('refreshBtn').classList.remove('spinning'));
+}
+function toggleTheme() {
+  theme = theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+  try { localStorage.setItem('iaFeed_theme', theme); } catch(e){}
 }
 
 document.getElementById('filters').addEventListener('click', e => {
-    const btn = e.target.closest('.filter-btn');
-    if (!btn) return;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    activeFilter = btn.dataset.filter;
-    render();
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeFilter = btn.dataset.filter;
+  visibleCount = PAGE_SIZE;
+  render();
 });
-document.getElementById('searchInput').addEventListener('input', e => { searchQuery = e.target.value; render(); });
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchQuery = e.target.value;
+  visibleCount = PAGE_SIZE;
+  render();
+});
 
-// ── SKELETON ─────────────────────────────────────────────────────
+/* ── SKELETON ───────────────────────────────────── */
 function showSkeleton() {
-    let html = '';
-    [72,85,60,78,90,65,80,70,88,76,68,82].forEach(w => {
-        html += `<div class="skeleton-item">
-            <div class="skel skel-rank"></div>
-            <div class="skel skel-thumb"></div>
-            <div class="skel-body" style="flex:1">
-                <div class="skel skel-title" style="width:${w}%"></div>
-                <div class="skel skel-desc"></div>
-                <div class="skel skel-desc2"></div>
-                <div class="skel skel-meta"></div>
-            </div>
-        </div>`;
-    });
-    document.getElementById('feedContainer').innerHTML = html;
+  document.getElementById('feedRoot').innerHTML = `
+    <div class="section-label sl-hoy"><span>Cargando…</span></div>
+    <div class="news-grid">
+      <div class="skel skel-hero"></div>
+      <div class="skel skel-feat"></div>
+      <div class="skel skel-reg"></div>
+      <div class="skel skel-reg"></div>
+      <div class="skel skel-reg"></div>
+      <div class="skel skel-reg"></div>
+    </div>`;
 }
 
-// ── TIMER ────────────────────────────────────────────────────────
-function resetTimer() { timerSecs = REFRESH_SECS; updateTimerDisplay(); }
-function updateTimerDisplay() {
-    const m = Math.floor(timerSecs/60), s = timerSecs%60;
-    document.getElementById('timerDisplay').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+/* ── TIMER ──────────────────────────────────────── */
+function resetTimer() { timerSecs = REFRESH_SECS; updateTimer(); }
+function updateTimer() {
+  const m = Math.floor(timerSecs/60), s = timerSecs%60;
+  document.getElementById('timerDisplay').textContent = `${m}:${s.toString().padStart(2,'0')}`;
 }
 function startTimer() {
-    if (timerInterval) clearInterval(timerInterval);
-    timerInterval = setInterval(() => { timerSecs--; updateTimerDisplay(); if(timerSecs<=0) loadAllFeeds(); }, 1000);
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => { timerSecs--; updateTimer(); if(timerSecs<=0) loadAllFeeds(); }, 1000);
 }
 
-// ── STATUS / HELPERS ─────────────────────────────────────────────
+/* ── STATUS ─────────────────────────────────────── */
 function setStatus(t, live) {
-    document.getElementById('statusText').textContent = t;
-    document.getElementById('statusDot').className = 'status-dot' + (live?' live':'');
+  document.getElementById('statusText').textContent = t;
+  document.getElementById('liveDot').className = 'live-dot' + (live ? ' on' : '');
 }
-function startOfDay(d) { const c=new Date(d); c.setHours(0,0,0,0); return c; }
-function getTimeAgo(date) {
-    const diff=Date.now()-date.getTime(), m=Math.floor(diff/60000), h=Math.floor(diff/3600000), d=Math.floor(diff/86400000);
-    if(m<1) return 'ahora mismo'; if(m<60) return `hace ${m} min`;
-    if(h<24) return `hace ${h} h`; if(d===1) return 'ayer'; return `hace ${d} días`;
+
+/* ── HELPERS ────────────────────────────────────── */
+function dayStart(d) { const c=new Date(d); c.setHours(0,0,0,0); return c; }
+function timeAgo(date) {
+  const diff=Date.now()-date.getTime(), m=Math.floor(diff/60000), h=Math.floor(diff/3600000), d=Math.floor(diff/86400000);
+  if(m<1) return 'ahora'; if(m<60) return `hace ${m}m`; if(h<24) return `hace ${h}h`; if(d===1) return 'ayer'; return `hace ${d}d`;
 }
 function fmtTime(d) { return d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}); }
-function esc(str) {
-    if(!str) return '';
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+function esc(s) {
+  if(!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
+/* ── INIT ───────────────────────────────────────── */
 loadAllFeeds();
 startTimer();
 </script>
